@@ -3,7 +3,7 @@ import json
 
 dir = os.getcwd()+"/maps"
 strairsCost = 5
-elevatorCost = 1
+elevatorCost = doorCost = 1
 
 mergeData = {
     "floors" : {},
@@ -14,7 +14,7 @@ mergeData = {
 
 def entryDecode(code):
     s = code.split("_")
-    return s #[0]: id, [1]: level, [2]: floor
+    return s # [0]: id, [1]: level, [2]: floor
 
 def findById(entries, id):
     for entry in entries:
@@ -36,12 +36,16 @@ def addToGraph(entries, floorid):
             id = curCode[0]
             level = curCode[1]
             if (id == curEnt["id"] and abs(int(level)-int(curEnt["level"]))==1 ):
+                acost = elevatorCost
                 if curEnt["type"]=="stairs":
-                    data[ent] = strairsCost
-                    mergeData["graph"][ent][curEnt["code"]] = strairsCost
-                else:
-                    data[ent] = elevatorCost
-                    mergeData["graph"][ent][curEnt["code"]] = elevatorCost
+                    acost = strairsCost
+
+                elif curEnt["type"]=="door":
+                    acost = doorCost
+
+                data[ent] = acost
+                mergeData["graph"][ent][curEnt["code"]] = acost
+        print(data)
         mergeData["graph"][curEnt["code"]] = data
 
 
@@ -57,7 +61,8 @@ def formEntry(entry, floorId):
         "floorId": floorId,
         "id": entry["id"],
         "level": entry["level"],
-        "cords": entry["cords"]
+        "cords": entry["cords"],
+        "type": entry["type"]
     }
 
 def formMapData(mapData):
@@ -84,13 +89,11 @@ def formMapData(mapData):
     addToGraph(mapData["entries"], floorId)
 
 for filename in os.listdir(dir):
-    print(filename)
     curData = {}
     with open(os.path.join(dir, filename), 'r') as f:
         curData = json.load(f)
         formMapData(curData)
 
-print(mergeData)
 
 with open("mergeData.json", "w") as f:
     json.dump(mergeData, f)
