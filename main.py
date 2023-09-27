@@ -73,7 +73,7 @@ def formMapData(mapData):
 
     newMapData["places"] = {}
     for place in mapData["places"]:
-        newMapData["places"][place["name"]] = place
+        newMapData["places"][place["id"]] = place
     
     newMapData["entries"] = {}
     for entry in mapData["entries"]:
