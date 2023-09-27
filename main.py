@@ -53,7 +53,8 @@ def addToGraph(entries, floorid):
 def formPlace(place, floorId):
     return {
         "floorId": floorId,
-        "cords": place["cords"]
+        "cords": place["cords"],
+        "id": place["id"],
     }
 
 def formEntry(entry, floorId):
